@@ -1,9 +1,50 @@
-import example.pepita
+import example.*
 
-describe "group of tests for pepita" {
-
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+describe "Test de Empresa - Etapa 1" {
+  //Tenemos estas universidades:
+  const sanMartin = new Universidad(provincia = "Buenos Aires", honorariosRecomendados = 3500)
+  const rosario = new Universidad(provincia = "Santa Fe", honorariosRecomendados = 2800)
+  const corrientes = new Universidad(provincia = "Corrientes", honorariosRecomendados = 4200)
+  const hurlingham = new Universidad(provincia = "Buenos Aires", honorariosRecomendados = 8800)
+  
+  //Tenemos estos profesionales:
+  const juana = new ProfesionalVinculado(universidad = rosario)
+  const melina = new ProfesionalAsociado(universidad = corrientes)
+  const rocio = new ProfesionalLibre(universidad = hurlingham, honorarios = 5000, provincias = ["Santa Fe", "Cordoba", "Buenos Aires"])
+  const luciana = new ProfesionalLibre(universidad = rosario, honorarios = 3200, provincias = ["Santa Fe", "Entre Rios"])
+  
+  //empresa
+  const empresa1 = new Empresa(honorariosDeReferencia = 3500, profesionales = [juana, melina, rocio, luciana])
+ 
+ //A.cuantos estudiaron en cada universidad
+ test "cuantos estudiaron en cada universidad" {
+   assert.equals(2, empresa1.cuantosEstudiaronEn(rosario))
+   assert.equals(1, empresa1.cuantosEstudiaronEn(hurlingham))
+   assert.equals(0, empresa1.cuantosEstudiaronEn(sanMartin))
+  }
+  
+  //B.profesionales caros
+  test "profesionales caros" {
+    assert.equals(#{rocio}, empresa1.profesionalesCaros().asSet())
   }
 
+  //C.Universidades formadoras
+  test "Universidades formadoras" {
+    assert.equals(#{rosario, corrientes, hurlingham}, empresa1.universidadesFormadoras())
+  }
+
+  //D.Profesional mas Barato
+  test "El Profesional mas barato" {
+    assert.equals(juana, empresa1.elProfesionalMasBarato())
+  }
+
+  //E.Profesional acotado
+  test "Es gente acotada" {
+    assert.that(empresa1.sonGenteAcotada())
+    
+    luciana.provincias().add("Corrientes")
+    luciana.provincias().add("Misiones")
+
+    assert.notThat(empresa1.sonGenteAcotada())
+  }
 }
